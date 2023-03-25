@@ -106,6 +106,8 @@ public class SelectMode extends Mode{
 			HashMap<String, UMLObject> members = new HashMap<String, UMLObject>();
 			UMLObject object;
 			for(int i = 0; i < selected_objects.size(); i++){
+				//ArrayList<String> selected_objects;
+				//利用selected_objects.get(i)取得是第幾個object,回傳的是string代表第幾個
 				object = umlObjectMap.get(selected_objects.get(i));
 				object.setDrawPortsFlag(false);
 				members.put(selected_objects.get(i), object);
@@ -118,11 +120,13 @@ public class SelectMode extends Mode{
 	
 	public void ungroupObjects(){
 		
+		//如果只選一個物件而且這個物件是一個group
 		if(selected_objects.size() == 1){
 			if(umlObjectMap.get(selected_objects.get(0)).getName() == Configure.composite_object_name){
 				CompositeObject composite_object = (CompositeObject)umlObjectMap.get(selected_objects.get(0));
-				//�Ncomposite_object�����Ҧ�members���s�[�^uml_object_map�A�ñN�쥻��composite_object�quml_object_map������
+				//putAll()把原本在composite_object map的key,val全部加入umlObjectMap
 				umlObjectMap.putAll(composite_object.getAllMembers());
+				//umlObjectMap移除一個composition
 				umlObjectMap.remove(selected_objects.get(0));
 				UMLCanvas.getInstance().repaint();
 			}
@@ -131,12 +135,16 @@ public class SelectMode extends Mode{
 	
 	public void renameObject(){
 		if(selected_objects.size() == 1){
+			//如果是composite物件,直接return
 			if(umlObjectMap.get(selected_objects.get(0)).getName() == Configure.composite_object_name){
 				return;
 			}
+			//umlObjectMap.get(selected_objects.get(0))抓取現在正被點擊的物件
 			RenameDialog dialog = new RenameDialog(umlObjectMap.get(selected_objects.get(0)));
+			//當初UMLCanvas設定從x座標=116,y座標=38開始然後寬是578,高是494
 			int x = (int)(UMLCanvas.getInstance().getX()+UMLCanvas.getInstance().getWidth()*0.7);
 			int y = (int)(UMLCanvas.getInstance().getY()+UMLCanvas.getInstance().getHeight()*0.4);
+			//設定彈跳視窗的位置
 			dialog.setLocation(x,y);
 			dialog.setVisible(true);
 			UMLCanvas.getInstance().repaint();

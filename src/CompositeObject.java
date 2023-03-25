@@ -15,7 +15,9 @@ public class CompositeObject extends UMLObject{
 		this.width = Integer.MIN_VALUE;
 		this.height = Integer.MIN_VALUE;
 		
+		//抓取整個composition從哪個x和哪個y開始
 		refreshStartVertex();
+		//更新composition物件的寬度和高度
 		refreshWidthAndHeight();
 	}
 	
@@ -24,13 +26,15 @@ public class CompositeObject extends UMLObject{
 	public HashMap<String, UMLObject> getAllMembers(){ return this.members;}
 	
 	public void drawInCanvas(Graphics2D g){
-		// 
+		
 		for(Map.Entry<String, UMLObject> entry: members.entrySet())
 		{
 			entry.getValue().drawInCanvas(g);
 		}
 		
+		//更新組合物的4個port(邊邊的點)
 		refreshPorts();
+		//劃出邊邊的4個點
 		if(drawports){
 			drawPorts(g);
 		}
@@ -49,11 +53,15 @@ public class CompositeObject extends UMLObject{
 	
 	//更新group物件的寬度和高度
 	private void refreshWidthAndHeight(){
-		//迭代 members 內的每個 entry，對於每個 entry，計算該 entry 所代表的 UMLObject 與 UMLGroup 物件的左上角的距離
 		for(Map.Entry<String, UMLObject> entry: members.entrySet()){
-			//Group新的寬度=(UMLObject 的 x 坐標 - UMLGroup 物件的 x 坐標) + 該 UMLObject 的寬度
+			//entry.getValue().getX()取得現在物件的x座標,entry.getValue().getWidth()取得現在物件的寬度,this.x代表整個composition的起始x座標
+			//整個composition的寬度=物件的x座標+物件寬度-composition的起始座標
+			//整個composition的寬度=最右邊的物件x座標-最左邊的物件x座標+物件的寬度
 			int new_width = entry.getValue().getX() + entry.getValue().getWidth() - this.x;
 			int new_height = entry.getValue().getY() + entry.getValue().getHeight() - this.y;
+//			System.out.println(x);
+//			System.out.println(entry.getValue().getX());
+//			System.out.println(entry.getValue().getWidth());
 			if(this.width < new_width){
 				this.width = new_width;
 			}
@@ -72,6 +80,7 @@ public class CompositeObject extends UMLObject{
 		return false;
 	}
 	
+	//判斷start point 和 end point有沒有在給定的一個矩形內
 	public boolean isContained(Point start_point, Point end_point){
 		int[][] vertices = {{x, y}, {x+width, y}, {x, y+height}, {x+width, y+height}};
 		boolean result = true;
@@ -92,6 +101,7 @@ public class CompositeObject extends UMLObject{
 		return false;
 	}
 	
+	//port 0~3: 上,左,右,下
 	private void refreshPorts(){
 		ports[0] = new Port(new Point((int)(x + width * 0.5 - 3.0), (int)(y - 3.0)));
 		ports[1] = new Port(new Point((int)(x - 3.0), (int)(y + height * 0.5 - 3.0)));
@@ -110,7 +120,7 @@ public class CompositeObject extends UMLObject{
 		this.x += x_offset;
 		this.y += y_offset;
 		
-		//����members�̪��Ҧ�����
+		//整個composition移動=每個物件都要移動
 		for(Map.Entry<String, UMLObject> entry:members.entrySet())
 		{
 			entry.getValue().move(x_offset, y_offset);

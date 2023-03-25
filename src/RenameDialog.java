@@ -15,6 +15,7 @@ public class RenameDialog extends JDialog{
 	public RenameDialog(UMLObject obj) {
 		super(new JFrame(), Configure.rename_dailog_title, true);
 		object = obj;
+		//container代表按下rename跳出來的小視窗
 		container = getContentPane();
 		init();
 	}
@@ -22,6 +23,7 @@ public class RenameDialog extends JDialog{
 	private void init(){
 		try{
 			this.setResizable(false);
+			//小視窗的長270寬150
 			this.setSize(270, 150);
 			container.setLayout(null);
 			setDialogContent();
